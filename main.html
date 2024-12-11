@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Professional Chat Assistant</title>
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --hover-color: #1d4ed8;
+      --shadow-color: rgba(0, 0, 0, 0.1);
+      --transition-speed: 0.3s;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8fafc;
+    }
+
+    .bot-button {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 4px 12px var(--shadow-color);
+      z-index: 1000;
+      transition: all var(--transition-speed) ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+    }
+
+    .bot-button:hover {
+      background-color: var(--hover-color);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px var(--shadow-color);
+    }
+
+    .icon-wrapper {
+      position: relative;
+      width: 24px;
+      height: 24px;
+    }
+
+    .icon-chat,
+    .icon-close {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 24px;
+      height: 24px;
+      transition: transform var(--transition-speed) ease, opacity var(--transition-speed) ease;
+    }
+
+    .icon-chat {
+      opacity: 1;
+      transform: rotate(0) scale(1);
+    }
+
+    .icon-close {
+      opacity: 0;
+      transform: rotate(-180deg) scale(0.5);
+    }
+
+    .bot-button.active .icon-chat {
+      opacity: 0;
+      transform: rotate(180deg) scale(0.5);
+    }
+
+    .bot-button.active .icon-close {
+      opacity: 1;
+      transform: rotate(0) scale(1);
+    }
+
+    .chat-container {
+    display: none;
+    position: fixed;
+    bottom: calc(24px + 70px);
+    right: 24px;
+    width: 380px;
+    /* Increased height here */
+    height: calc(100vh - 140px); /* Changed from 200px to 140px for more height */
+    max-height: 700px;  /* Increased from 600px */
+    min-height: 500px;  /* Increased from 400px */
+    box-shadow: 0 8px 24px var(--shadow-color);
+    border-radius: 16px;
+    overflow: hidden;
+    background-color: white;
+    z-index: 999;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all var(--transition-speed) ease;
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+    .chat-container {
+        width: 100%;
+        height: calc(100vh - 80px);
+        max-height: none;
+        right: 0;
+        bottom: 80px;
+        border-radius: 16px 16px 0 0;
+    }
+}
+
+
+    .chat-container.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .chat-header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 20px;
+      padding: 4px;
+      transition: opacity var(--transition-speed) ease;
+    }
+
+    .close-button:hover {
+      opacity: 0.8;
+    }
+
+    .chat-frame {
+      width: 100%;
+      height: calc(100% - 56px);
+      border: none;
+    }
+
+    @media (max-width: 480px) {
+      .chat-container {
+        width: 100%;
+        height: 100%;
+        right: 0;
+        bottom: 0;
+        border-radius: 0;
+      }
+
+      .bot-button {
+        bottom: 16px;
+        right: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="bot-button" id="botButton">
+    <div class="icon-wrapper">
+      <svg class="icon-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </div>
+  </button>
+
+  <div class="chat-container" id="chatContainer">
+    <div class="chat-header">
+      <span>Chat Assistant</span>
+      <button class="close-button" onclick="toggleChat()">×</button>
+    </div>
+    <iframe 
+      class="chat-frame"
+      src="https://capps-backend-shlbcgtntgjdc.livelyocean-8ac497ca.westus.azurecontainerapps.io/" 
+      title="Chat Assistant">
+    </iframe>
+  </div>
+
+  <script>
+    const botButton = document.getElementById('botButton');
+    const chatContainer = document.getElementById('chatContainer');
+    
+    function toggleChat() {
+      const isVisible = chatContainer.style.display === 'block';
+      
+      if (!isVisible) {
+        chatContainer.style.display = 'block';
+        setTimeout(() => {
+          chatContainer.classList.add('visible');
+          botButton.classList.add('active');
+        }, 10);
+      } else {
+        chatContainer.classList.remove('visible');
+        botButton.classList.remove('active');
+        setTimeout(() => {
+          chatContainer.style.display = 'none';
+        }, 300);
+      }
+    }
+
+    // Close chat when clicking outside
+    document.addEventListener('click', (event) => {
+      const isClickInsideChat = chatContainer.contains(event.target);
+      const isClickOnButton = botButton.contains(event.target);
+      
+      if (!isClickInsideChat && !isClickOnButton && chatContainer.classList.contains('visible')) {
+        toggleChat();
+      }
+    });
+
+    // Handle escape key
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && chatContainer.classList.contains('visible')) {
+        toggleChat();
+      }
+    });
+
+    botButton.addEventListener('click', toggleChat);
+  </script>
+</body>
+</html>
