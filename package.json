@@ -1,0 +1,12 @@
+{
+    "name": "chat-widget",
+    "version": "1.0.0",
+    "description": "Chat widget for websites",
+    "main": "server.js",
+    "scripts": {
+      "start": "node server.js"
+    },
+    "dependencies": {
+      "express": "^4.17.1"
+    }
+  }
